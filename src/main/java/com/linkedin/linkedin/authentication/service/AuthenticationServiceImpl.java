@@ -242,11 +242,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new IllegalArgumentException("user not found");
         }
         AuthenticationUser user = new  AuthenticationUser();
-        if (user.getFirstName() == null)  user.setFirstName(firstName);
-        if (user.getLastName() == null)  user.setLastName(lastName);
-        if (user.getCompany() == null) user.setCompany(company);
-        if (user.getPosition() == null) user.setPosition(position);
-        if (user.getLocation() == null) user.setLocation(location);
+        if (firstName != null)  user.setFirstName(firstName);
+        if (lastName != null)  user.setLastName(lastName);
+        if (company != null) user.setCompany(company);
+        if (position != null) user.setPosition(position);
+        if (location != null) user.setLocation(location);
         userRepository.updateProfileUser(user, id);
         return user;
     }
