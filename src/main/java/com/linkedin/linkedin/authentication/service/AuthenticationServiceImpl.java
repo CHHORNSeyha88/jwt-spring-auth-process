@@ -1,12 +1,12 @@
 package com.linkedin.linkedin.authentication.service;
-import com.linkedin.linkedin.authentication.dto.AuthenticationRequest;
-import com.linkedin.linkedin.authentication.dto.AuthenticationResponse;
-import com.linkedin.linkedin.authentication.dto.LoginRequest;
-import com.linkedin.linkedin.authentication.dto.RegisterResponse;
+import com.linkedin.linkedin.authentication.dto.response.LoginResponse;
+import com.linkedin.linkedin.authentication.dto.req.LoginRequest;
+import com.linkedin.linkedin.authentication.dto.response.RegisterResponse;
 import com.linkedin.linkedin.authentication.jwt.JwtUtils;
 import com.linkedin.linkedin.authentication.model.AuthenticationUser;
 import com.linkedin.linkedin.authentication.repository.AuthenticationRepository;
 import com.linkedin.linkedin.authentication.utils.EmailSender;
+import com.linkedin.linkedin.authentication.utils.SecurityUtil;
 import com.linkedin.linkedin.exceptioncontroller.EmailNotVerifiedException;
 import com.linkedin.linkedin.exceptioncontroller.InvalidCredentialsException;
 import jakarta.mail.IllegalWriteException;
@@ -38,6 +38,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
     private final int durationInMinutes = 1;
     private final ModelMapper modelMapper;
+    private final SecurityUtil securityUtil;
 
     //    generate
     public String generateEmailVerification() {
@@ -115,7 +116,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     //register
     @Override
-    public RegisterResponse register(AuthenticationRequest request) throws MessagingException, UnsupportedEncodingException {
+    public RegisterResponse register(LoginRequest request) throws MessagingException, UnsupportedEncodingException {
         Optional<AuthenticationUser> userOpt = userRepository.findByEmail(request.getEmail());
 
         if (userOpt.isPresent()) {
@@ -198,7 +199,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 
     @Override
-    public AuthenticationResponse login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
         // Fetch user once
         AuthenticationUser user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -221,7 +222,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String token = jwtUtils.generateToken(user.getEmail());
 
         // Return authentication response
-        return AuthenticationResponse.builder()
+        return LoginResponse.builder()
                 .token(token)
                 .message("Authentication Successful!")
                 .build();
@@ -231,6 +232,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public AuthenticationUser getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+
+    public AuthenticationUser updateUserProfile(Long id, String firstName, String lastName, String company, String position, String location) {
+        Long existUser = securityUtil.getCurrentUserId();
+        System.out.println(existUser);
+        if(existUser == null){
+            throw new IllegalArgumentException("user not found");
+        }
+        AuthenticationUser user = new  AuthenticationUser();
+        if (user.getFirstName() == null)  user.setFirstName(firstName);
+        if (user.getLastName() == null)  user.setLastName(lastName);
+        if (user.getCompany() == null) user.setCompany(company);
+        if (user.getPosition() == null) user.setPosition(position);
+        if (user.getLocation() == null) user.setLocation(location);
+        userRepository.updateProfileUser(user, id);
+        return user;
     }
 }
 

@@ -1,4 +1,4 @@
-package com.linkedin.linkedin.authentication.dto;
+package com.linkedin.linkedin.authentication.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AuthenticationResponse {
+public class LoginResponse {
     private String token;
     private String message;
 

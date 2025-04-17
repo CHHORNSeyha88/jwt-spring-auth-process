@@ -1,10 +1,10 @@
 package com.linkedin.linkedin.authentication.controller;
-import com.linkedin.linkedin.authentication.dto.AuthenticationRequest;
-import com.linkedin.linkedin.authentication.dto.AuthenticationResponse;
-import com.linkedin.linkedin.authentication.dto.LoginRequest;
-import com.linkedin.linkedin.authentication.dto.RegisterResponse;
+import com.linkedin.linkedin.authentication.dto.response.LoginResponse;
+import com.linkedin.linkedin.authentication.dto.req.LoginRequest;
+import com.linkedin.linkedin.authentication.dto.response.RegisterResponse;
 import com.linkedin.linkedin.authentication.model.AuthenticationUser;
 import com.linkedin.linkedin.authentication.service.AuthenticationServiceImpl;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.mail.IllegalWriteException;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
@@ -23,12 +23,12 @@ public class AuthenticationController {
     private final AuthenticationServiceImpl authenticationService;
 
     @PostMapping("/register")
-    public RegisterResponse register(@Valid @RequestBody AuthenticationRequest request) throws MessagingException, UnsupportedEncodingException {
+    public RegisterResponse register(@Valid @RequestBody LoginRequest request) throws MessagingException, UnsupportedEncodingException {
         return authenticationService.register(request);
     }
 
     @PostMapping("/login")
-    public AuthenticationResponse login(@Valid @RequestBody LoginRequest loginRequest) {
+    public LoginResponse login(@Valid @RequestBody LoginRequest loginRequest) {
         return authenticationService.login(loginRequest);
     }
 
@@ -64,9 +64,23 @@ public class AuthenticationController {
         }
     }
 
-
     @GetMapping("/{email}")
     public ResponseEntity<AuthenticationUser> getUserByEmail(@PathVariable String email) {
         return ResponseEntity.ok(authenticationService.getUserByEmail(email));
     }
+    @SecurityRequirement(name = "bearerAuth")
+    @PutMapping("/profile/{id}")
+    public AuthenticationUser updateUserProfile(
+                                                @PathVariable Long id,
+                                                @RequestParam(required = false) String firstName,
+                                                @RequestParam(required = false) String lastName,
+                                                @RequestParam(required = false) String company,
+                                                @RequestParam(required = false) String position,
+                                                @RequestParam(required = false) String location
+                                                ){
+
+        return authenticationService.updateUserProfile(id, firstName, lastName, company, position, location);
+
+    }
+
 }

@@ -31,13 +31,24 @@ public interface AuthenticationRepository {
 """)
     void updatePasswordReset(AuthenticationUser user);
 
+//    update Profile User
 
+    @Update("""
+UPDATE users
+SET firstname = #{user.firstName},
+    lastname = #{user.lastName},
+    company = #{user.company},
+    position = #{user.position},
+    location = #{user.location}
+where id = #{userId}
+""")
+    void updateProfileUser (@Param("user") AuthenticationUser user, Long userId);
 
 
     @Select("SELECT * FROM users WHERE email = #{email}")
     Optional<AuthenticationUser> findByEmail(@Param("email") String email);
 
-    @Select("SELECT * FROM users WHERE email = #{email}")
-    AuthenticationUser findByNormalEmail(@Param("email") String email);
+    @Select("SELECT * FROM users WHERE id = #{userId}")
+    AuthenticationUser findAuthUserById(@Param("userId") Long userId);
 
 }

@@ -25,12 +25,10 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
-
         ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
         problem.setTitle("Access Denied");
         problem.setDetail(accessDeniedException.getMessage());
         problem.setProperty("path", request.getRequestURI());
-
         objectMapper.writeValue(response.getOutputStream(), problem);
     }
 

@@ -1,4 +1,4 @@
-package com.linkedin.linkedin.authentication.dto;
+package com.linkedin.linkedin.authentication.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

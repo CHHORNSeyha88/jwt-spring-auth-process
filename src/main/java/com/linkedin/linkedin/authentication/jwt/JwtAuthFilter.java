@@ -1,6 +1,4 @@
 package com.linkedin.linkedin.authentication.jwt;
-
-import com.linkedin.linkedin.authentication.service.AuthenticationService;
 import com.linkedin.linkedin.authentication.service.AuthenticationServiceImpl;
 import com.linkedin.linkedin.authentication.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
@@ -22,6 +20,7 @@ import java.io.IOException;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
+    private final AuthenticationServiceImpl authenticationService;
     private final CustomUserDetailsService userDetailsService;
 
     @Override
@@ -43,6 +42,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authToken);
+//                        Testing new to identify user
+//                        AuthenticationUser = authenticationService.getUserByEmail(email);
+//                        request.setAttribute("user",authenticationUser);
                     }
                 }
             } catch (Exception e) {

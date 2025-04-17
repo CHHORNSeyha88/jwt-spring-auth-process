@@ -1,9 +1,8 @@
 package com.linkedin.linkedin.authentication.service;
 
-import com.linkedin.linkedin.authentication.dto.AuthenticationRequest;
-import com.linkedin.linkedin.authentication.dto.AuthenticationResponse;
-import com.linkedin.linkedin.authentication.dto.LoginRequest;
-import com.linkedin.linkedin.authentication.dto.RegisterResponse;
+import com.linkedin.linkedin.authentication.dto.response.LoginResponse;
+import com.linkedin.linkedin.authentication.dto.req.LoginRequest;
+import com.linkedin.linkedin.authentication.dto.response.RegisterResponse;
 import com.linkedin.linkedin.authentication.model.AuthenticationUser;
 import jakarta.mail.IllegalWriteException;
 import jakarta.mail.MessagingException;
@@ -11,8 +10,8 @@ import jakarta.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
 
 public interface AuthenticationService{
-    RegisterResponse register(AuthenticationRequest request) throws MessagingException, UnsupportedEncodingException;
-    AuthenticationResponse login(LoginRequest loginRequest);
+    RegisterResponse register(LoginRequest request) throws MessagingException, UnsupportedEncodingException;
+    LoginResponse login(LoginRequest loginRequest);
     AuthenticationUser getUserByEmail(String email);
      void sendMailVerificationToken(String email);
      void validateEmailVerificationToken(String token, String email);

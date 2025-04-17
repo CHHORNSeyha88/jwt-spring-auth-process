@@ -1,4 +1,4 @@
-package com.linkedin.linkedin.authentication.dto;
+package com.linkedin.linkedin.authentication.dto.req;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
