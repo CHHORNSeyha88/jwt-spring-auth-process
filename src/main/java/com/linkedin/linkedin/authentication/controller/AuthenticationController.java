@@ -1,9 +1,11 @@
 package com.linkedin.linkedin.authentication.controller;
+
 import com.linkedin.linkedin.authentication.dto.response.LoginResponse;
 import com.linkedin.linkedin.authentication.dto.req.LoginRequest;
 import com.linkedin.linkedin.authentication.dto.response.RegisterResponse;
 import com.linkedin.linkedin.authentication.model.AuthenticationUser;
 import com.linkedin.linkedin.authentication.service.AuthenticationServiceImpl;
+import com.linkedin.linkedin.authentication.utils.SecurityUtil;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.mail.IllegalWriteException;
 import jakarta.mail.MessagingException;
@@ -21,6 +23,7 @@ import java.io.UnsupportedEncodingException;
 public class AuthenticationController {
 
     private final AuthenticationServiceImpl authenticationService;
+    private final SecurityUtil securityUtil;
 
     @PostMapping("/register")
     public RegisterResponse register(@Valid @RequestBody LoginRequest request) throws MessagingException, UnsupportedEncodingException {
@@ -34,8 +37,8 @@ public class AuthenticationController {
 
     @PutMapping("/resend-verification")
     public ResponseEntity<String> resendVerificationToken(@RequestParam @Email String email) {
-            authenticationService.sendMailVerificationToken(email);
-            return ResponseEntity.ok("A new verification code has been sent to your email.");
+        authenticationService.sendMailVerificationToken(email);
+        return ResponseEntity.ok("A new verification code has been sent to your email.");
     }
 
 
@@ -55,7 +58,6 @@ public class AuthenticationController {
     public ResponseEntity<String> verifyEmail(
             @RequestParam @Email String email,
             @RequestParam String token) {
-
         try {
             authenticationService.validateEmailVerificationToken(token, email);
             return ResponseEntity.ok("Email successfully verified.");
@@ -68,18 +70,18 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationUser> getUserByEmail(@PathVariable String email) {
         return ResponseEntity.ok(authenticationService.getUserByEmail(email));
     }
-    @SecurityRequirement(name = "bearerAuth")
-    @PutMapping("/profile/{id}")
-    public AuthenticationUser updateUserProfile(
-                                                @PathVariable Long id,
-                                                @RequestParam(required = false) String firstName,
-                                                @RequestParam(required = false) String lastName,
-                                                @RequestParam(required = false) String company,
-                                                @RequestParam(required = false) String position,
-                                                @RequestParam(required = false) String location
-                                                ){
 
-        return authenticationService.updateUserProfile(id, firstName, lastName, company, position, location);
+    @SecurityRequirement(name = "bearerAuth")
+    @PutMapping("/profile")
+    public AuthenticationUser updateUserProfile(
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String company,
+            @RequestParam(required = false) String position,
+            @RequestParam(required = false) String location
+    ) {
+        Long userUpdateId = securityUtil.getCurrentUserId();
+        return authenticationService.updateUserProfile(userUpdateId, firstName, lastName, company, position, location);
 
     }
 

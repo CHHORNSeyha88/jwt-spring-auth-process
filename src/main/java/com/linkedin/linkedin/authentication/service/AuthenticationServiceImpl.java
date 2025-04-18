@@ -1,6 +1,7 @@
 package com.linkedin.linkedin.authentication.service;
-import com.linkedin.linkedin.authentication.dto.response.LoginResponse;
+
 import com.linkedin.linkedin.authentication.dto.req.LoginRequest;
+import com.linkedin.linkedin.authentication.dto.response.LoginResponse;
 import com.linkedin.linkedin.authentication.dto.response.RegisterResponse;
 import com.linkedin.linkedin.authentication.jwt.JwtUtils;
 import com.linkedin.linkedin.authentication.model.AuthenticationUser;
@@ -67,7 +68,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         String emailVerificationCode = generateEmailVerification(); // e.g., 6-digit code
         String hashedToken = passwordEncoder.encode(emailVerificationCode);
-
         user.setEmailVerificationToken(hashedToken);
         user.setEmailVerificationExpirationDate(LocalDateTime.now().plusMinutes(durationInMinutes));
 
@@ -198,6 +198,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
 
+    //    login
     @Override
     public LoginResponse login(LoginRequest request) {
         // Fetch user once
@@ -234,20 +235,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-
-    public AuthenticationUser updateUserProfile(Long id, String firstName, String lastName, String company, String position, String location) {
+    //    update profile
+    public AuthenticationUser updateUserProfile(Long id,String firstName, String lastName, String company, String position, String location) {
         Long existUser = securityUtil.getCurrentUserId();
         System.out.println(existUser);
-        if(existUser == null){
+        if (existUser == null) {
             throw new IllegalArgumentException("user not found");
         }
-        AuthenticationUser user = new  AuthenticationUser();
-        if (firstName != null)  user.setFirstName(firstName);
-        if (lastName != null)  user.setLastName(lastName);
+        AuthenticationUser user = new AuthenticationUser();
+        if (firstName != null) user.setFirstName(firstName);
+        if (lastName != null) user.setLastName(lastName);
         if (company != null) user.setCompany(company);
         if (position != null) user.setPosition(position);
         if (location != null) user.setLocation(location);
-        userRepository.updateProfileUser(user, id);
+        userRepository.updateProfileUser(user, existUser);
         return user;
     }
 }

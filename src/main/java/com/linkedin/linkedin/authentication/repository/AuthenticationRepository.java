@@ -1,4 +1,5 @@
 package com.linkedin.linkedin.authentication.repository;
+import com.linkedin.linkedin.authentication.dto.response.AuthorResponse;
 import com.linkedin.linkedin.authentication.model.AuthenticationUser;
 import org.apache.ibatis.annotations.*;
 import java.util.Optional;
@@ -49,6 +50,6 @@ where id = #{userId}
     Optional<AuthenticationUser> findByEmail(@Param("email") String email);
 
     @Select("SELECT * FROM users WHERE id = #{userId}")
-    AuthenticationUser findAuthUserById(@Param("userId") Long userId);
+    AuthorResponse findAuthUserById(@Param("userId") Long userId);
 
 }
